@@ -11,7 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @SpringBootApplication
 @ServletComponentScan
-@EnableScheduling
 public class ProgramApplication {
 
     public static void main(String[] args) {
@@ -19,7 +18,7 @@ public class ProgramApplication {
     }
 
     //mvc控制器
-    @Configuration
+    //@Configuration
     static class WebMvcConfigurer extends WebMvcConfigurerAdapter {
         //增加拦截器
         public void addInterceptors(InterceptorRegistry registry){

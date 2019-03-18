@@ -81,6 +81,16 @@
             <artifactId>bcprov-ext-jdk15on</artifactId>
             <version>1.59</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.3</version>
+        </dependency>
     </dependencies>
 
     <build>
