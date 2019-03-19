@@ -25,11 +25,16 @@ $(function(){
 	}
 	var code = request.QueryString("code");
 
-	///项目名/Test/getUser.do 请求为自己封装的spring mvc中的controller中的方法。该方法需要自己写。
-	$.get("http://127.0.0.1:8080/saveUser?code="+code, function(result){
-   		document.getElementById("content1").innerHTML=JSON.stringify(result)+",code="+code;
-	});
-    /*window.location.href = "http://127.0.0.1:8080/saveUser?code="+code;*/
+    var url = "http://120.0.0.1:8082/saveUser?code="+code;
+    $.ajax(url, {
+        type:"GET",
+        dataType: 'jsonp',
+        jsonp:"callback",
+        crossDomain: true,
+        success: function(data) {
+
+        }
+    });
 });
 </script> 
 </body>  
