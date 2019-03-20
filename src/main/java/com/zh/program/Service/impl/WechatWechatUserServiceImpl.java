@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
+
 @Service
 @Slf4j
 @Transactional
@@ -19,7 +21,7 @@ public class WechatWechatUserServiceImpl implements WechatUserService {
     @Autowired
     private WechatUserDao wechatUserDao;
     @Override
-    public void saveUser(String code) {
+    public void saveUser(String code, HttpSession session) {
         Token accessToken;
         WechatUser wechatUser;
         try {
@@ -35,5 +37,11 @@ public class WechatWechatUserServiceImpl implements WechatUserService {
         if(wechatUser1 == null){
             wechatUserDao.save(wechatUser);
         }
+        session.setAttribute("user", wechatUser);
+    }
+
+    @Override
+    public WechatUser queryByOpenId(String openid) {
+        return wechatUserDao.findByOpenId(openid);
     }
 }

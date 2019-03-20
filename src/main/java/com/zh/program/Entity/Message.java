@@ -41,6 +41,10 @@ public class Message implements Serializable {
      */
     private Integer type;
     /**
+     * 需浏览次数
+     */
+    private Integer number;
+    /**
      * 推广数量
      */
     private BigDecimal amount;

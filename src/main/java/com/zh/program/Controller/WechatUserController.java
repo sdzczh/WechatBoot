@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 public class WechatUserController {
     @Autowired
@@ -26,7 +28,7 @@ public class WechatUserController {
 
     @ResponseBody
     @RequestMapping("/saveUser")
-    public void saveUser(String code) {
-        wechatUserService.saveUser(code);
+    public void saveUser(String code, HttpSession session) {
+        wechatUserService.saveUser(code, session);
     }
 }
