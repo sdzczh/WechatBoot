@@ -3,9 +3,8 @@ package com.zh.program.Common.utils;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.zh.program.Common.Constant;
-import com.zh.program.Common.exception.WeixinException;
-import com.zh.program.Entrty.Token;
-import com.zh.program.Entrty.WechatUser;
+import com.zh.program.Entity.Token;
+import com.zh.program.Entity.WechatUser;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;

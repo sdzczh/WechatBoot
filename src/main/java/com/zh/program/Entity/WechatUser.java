@@ -1,4 +1,4 @@
-package com.zh.program.Entrty;
+package com.zh.program.Entity;
 
 import lombok.Data;
 
