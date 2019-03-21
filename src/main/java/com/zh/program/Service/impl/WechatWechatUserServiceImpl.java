@@ -3,7 +3,11 @@ package com.zh.program.Service.impl;
 import com.zh.program.Common.Constant;
 import com.zh.program.Common.exception.WeixinException;
 import com.zh.program.Common.utils.CommonMethod;
+import com.zh.program.Dao.BrowseRecordDao;
+import com.zh.program.Dao.MessageDao;
 import com.zh.program.Dao.WechatUserDao;
+import com.zh.program.Entity.BrowseRecord;
+import com.zh.program.Entity.Message;
 import com.zh.program.Entity.Token;
 import com.zh.program.Entity.WechatUser;
 import com.zh.program.Service.WechatUserService;
@@ -12,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 
 @Service
 @Slf4j
@@ -20,8 +24,12 @@ import javax.servlet.http.HttpSession;
 public class WechatWechatUserServiceImpl implements WechatUserService {
     @Autowired
     private WechatUserDao wechatUserDao;
+    @Autowired
+    private BrowseRecordDao browseRecordDao;
+    @Autowired
+    private MessageDao messageDao;
     @Override
-    public void saveUser(String code, HttpSession session) {
+    public void saveUser(String code, String openid, Integer id) {
         Token accessToken;
         WechatUser wechatUser;
         try {
@@ -37,7 +45,29 @@ public class WechatWechatUserServiceImpl implements WechatUserService {
         if(wechatUser1 == null){
             wechatUserDao.save(wechatUser);
         }
-        session.setAttribute("user", wechatUser);
+        BrowseRecord browseRecord = browseRecordDao.queryOne(id, wechatUser.getOpenId(), openid);
+        if(browseRecord == null){
+            browseRecord = new BrowseRecord();
+            browseRecord.setMsg_id(id);
+            browseRecord.setUser_open_id(wechatUser.getOpenId());
+            browseRecord.setInvite_open_id(openid);
+            browseRecord.setNumber(0);
+            browseRecordDao.save(browseRecord);
+        }
+        Message message = messageDao.getOne(id);
+        //当前已浏览次数
+        Integer number = browseRecord.getNumber();
+        //完成任务需浏览次数
+        Integer shouldNumber = message.getNumber();
+        if(number < shouldNumber){
+            //当前已浏览次数加一
+            browseRecord.setNumber(number + 1);
+            browseRecordDao.save(browseRecord);
+            //MESSAGE表中剩余推广数量减一
+            message.setRemain(message.getRemain().subtract(BigDecimal.ONE));
+            messageDao.save(message);
+        }
+
     }
 
     @Override

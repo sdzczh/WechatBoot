@@ -2,10 +2,8 @@ package com.zh.program.Service;
 
 import com.zh.program.Entity.WechatUser;
 
-import javax.servlet.http.HttpSession;
-
 public interface WechatUserService {
-    void saveUser(String code, HttpSession session);
+    void saveUser(String code, String openid, Integer id);
 
     WechatUser queryByOpenId(String openid);
 }

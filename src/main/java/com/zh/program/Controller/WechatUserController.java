@@ -29,7 +29,6 @@ public class WechatUserController {
      * 请求获取用户授权
      * @param id
      * @param openid
-     * @param model
      * @return
      */
     @RequestMapping("/index/{id}/{openid}")
@@ -45,24 +44,22 @@ public class WechatUserController {
     /**
      * 保存授权用户信息
      * @param code
-     * @param session
      */
     @ResponseBody
     @RequestMapping("/saveUser")
-    public void saveUser(String code, HttpSession session) {
-        wechatUserService.saveUser(code, session);
+    public void saveUser(String code, String openid, Integer id) {
+        wechatUserService.saveUser(code, openid, id);
     }
 
     /**
      * 获取渲染页面数据 业务处理
      * @param id
-     * @param openid
      * @param callback
      * @return
      */
     @ResponseBody
     @RequestMapping("/getData")
-    public String getData(Integer id, String openid, String callback){
+    public String getData(Integer id, String callback){
         Message message = messageService.selectById(id);
         if(message == null || StrUtils.isBlank(message.getInfo())){
             return PREFIX + "ID填写错误";
@@ -70,6 +67,7 @@ public class WechatUserController {
         String Info = message.getInfo();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", Info);
+        jsonObject.put("title", message.getTitle());
         String result =  "{'ret':" + jsonObject + "}";
         result = callback + "("+result+")";
         return result;

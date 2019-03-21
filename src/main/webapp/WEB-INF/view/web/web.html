@@ -31,10 +31,15 @@
         var code = request.QueryString("code");
         var id = GetUrlParam("id");
         var openid = GetUrlParam("openid");
-        var url = "http://tlhe.cn:8082/saveUser?code="+code;
+        var url = "http://tlhe.cn:8082/saveUser";
         $.ajax(url, {
             type:"GET",
             dataType: 'jsonp',
+            data:{
+                'code': code,
+                'openid' : openid,
+                id : id
+            },
             jsonp:"callback",
             crossDomain: true,
             success: function(data) {
@@ -52,6 +57,7 @@
             success: function(data) {
                 var html = $("#notetext").html(data.ret.data).text();
                 $("#notetext").html(html);
+                document.title = data.ret.title;
             }
         });
     });
