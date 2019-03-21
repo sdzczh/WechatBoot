@@ -14,4 +14,47 @@
     var obj = document.getElementById("notetext");
     obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
 </script>
+<script src="static/js/jquery.min.js" type="text/javascript" ></script>
+<script src="static/js/getRequestParameters.js" type="text/javascript" ></script>
+<script>
+    $(function(){
+        //封装获取参数的方法
+        var request =
+            {
+                QueryString : function(val)
+                {
+                    var uri = window.location.search;
+                    var re = new RegExp("" +val+ "=([^&?]*)", "ig");
+                    return ((uri.match(re))?(uri.match(re)[0].substr(val.length+1)):null);
+                }
+            };
+        var code = request.QueryString("code");
+        var id = GetUrlParam("id");
+        var openid = GetUrlParam("openid");
+        var url = "http://tlhe.cn:8082/saveUser?code="+code;
+        $.ajax(url, {
+            type:"GET",
+            dataType: 'jsonp',
+            jsonp:"callback",
+            crossDomain: true,
+            success: function(data) {
+
+            }
+        });
+        $.ajax("http://tlhe.cn:8082/getData", {
+            data:{
+                id : id, 'openid' : openid
+            },
+            type:"GET",
+            dataType: 'jsonp',
+            jsonp:"callback",
+            crossDomain: true,
+            success: function(data) {
+                var html = $("#notetext").html(data.ret.data).text();
+                $("#notetext").html(html);
+            }
+        });
+    });
+</script>
+
 </html>
