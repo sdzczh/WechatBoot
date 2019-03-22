@@ -49,6 +49,10 @@ public class Message implements Serializable {
      */
     private BigDecimal amount;
     /**
+     * 佣金总额
+     */
+    private BigDecimal money;
+    /**
      * 剩余推广数量
      */
     private BigDecimal remain;
