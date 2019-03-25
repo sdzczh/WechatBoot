@@ -29,30 +29,24 @@ public class WechatWechatUserServiceImpl implements WechatUserService {
     @Autowired
     private MessageDao messageDao;
     @Override
-    public void saveUser(String code, String openid, Integer id) {
-        Token accessToken;
-        WechatUser wechatUser;
-        try {
-            // 获取TOKEN
-            accessToken = CommonMethod.getToken(Constant.WX_OPEN_ID, Constant.WX_APP_SECRET, code);
-            //获取User对象
-            wechatUser = CommonMethod.getUser(accessToken.getAccessToken(), Constant.WX_OPEN_ID);
-        } catch (Exception e) {
-            log.info(WeixinException.ACCESS_TOKEN_ERROR);
-            return;
+    public String saveUser(String code, String openid, Integer id) {
+        WechatUser wechatUser = getUser(code);
+        if(wechatUser == null){
+            return null;
         }
-        WechatUser wechatUser1 = wechatUserDao.findByOpenId(wechatUser.getOpenId());
+        String userOpenId = wechatUser.getOpenId();
+        WechatUser wechatUser1 = wechatUserDao.findByOpenId(userOpenId);
         if(wechatUser1 == null){
             wechatUserDao.save(wechatUser);
         }
-        BrowseRecord browseRecord = browseRecordDao.queryOne(id, wechatUser.getOpenId(), openid);
+        BrowseRecord browseRecord = browseRecordDao.queryOne(id, userOpenId, openid);
         if(browseRecord == null){
             browseRecord = new BrowseRecord();
             browseRecord.setMsg_id(id);
             browseRecord.setUser_open_id(wechatUser.getOpenId());
             browseRecord.setInvite_open_id(openid);
-            browseRecord.setNumber(0);
             browseRecordDao.save(browseRecord);
+            browseRecord.setNumber(0);
         }
         Message message = messageDao.getOne(id);
         //当前已浏览次数
@@ -67,7 +61,23 @@ public class WechatWechatUserServiceImpl implements WechatUserService {
             message.setRemain(message.getRemain().subtract(BigDecimal.ONE));
             messageDao.save(message);
         }
+        return userOpenId;
 
+    }
+
+    @Override
+    public WechatUser getUser(String code) {
+        Token accessToken;
+        try {
+            // 获取TOKEN
+            accessToken = CommonMethod.getToken(Constant.WX_OPEN_ID, Constant.WX_APP_SECRET, code);
+            //获取User对象
+            return CommonMethod.getUser(accessToken.getAccessToken(), Constant.WX_OPEN_ID);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info(WeixinException.ACCESS_TOKEN_ERROR);
+            return null;
+        }
     }
 
     @Override

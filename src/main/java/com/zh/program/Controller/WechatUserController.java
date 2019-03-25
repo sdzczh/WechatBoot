@@ -44,8 +44,11 @@ public class WechatUserController {
      */
     @ResponseBody
     @RequestMapping("/saveUser")
-    public void saveUser(String code, String openid, Integer id) {
-        wechatUserService.saveUser(code, openid, id);
+    public String saveUser(String code, String openid, Integer id, String callback) {
+        String userOpenId = wechatUserService.saveUser(code, openid, id);
+        String result =  "{'ret':'" + userOpenId + "'}";
+        result = callback + "("+result+")";
+        return result;
     }
 
     /**

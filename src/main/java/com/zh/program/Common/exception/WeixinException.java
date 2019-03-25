@@ -20,6 +20,7 @@ public class WeixinException extends Exception {
 
     public static final int ERROR_SEVER_CODE = -300;
     public static final String ERROR_SERVER_MESSAGE = "服务器异常,请重试";
+    public static final String ERROR_SERVER_URL = "获取系统路径失败,请重试";
 
 
     // 服务器异常
