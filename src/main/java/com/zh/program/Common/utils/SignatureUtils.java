@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SignatureUtils {
-    @Resource
-    private RedisTemplate<String, String> redis;
+
 
     /**
      * 获取access_token

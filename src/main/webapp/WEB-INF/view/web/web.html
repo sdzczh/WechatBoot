@@ -82,12 +82,11 @@
     }
 
     function getReferUrl() {
-        var code =getString("code");
         var id = GetUrlParam("id");
         var openid = $("#user_open_id").val();
         $.ajax("http://tlhe.cn:8082/web/getReferUrl", {
             data:{
-                id : id, 'code' : code, 'openid' : openid
+                id : id, 'openid' : openid
             },
             type:"GET",
             dataType: 'jsonp',
