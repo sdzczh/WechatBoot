@@ -8,7 +8,7 @@ import com.zh.program.Dao.MessageDao;
 import com.zh.program.Dao.WechatUserDao;
 import com.zh.program.Entity.BrowseRecord;
 import com.zh.program.Entity.Message;
-import com.zh.program.Entity.Token;
+import com.zh.program.Dto.Token;
 import com.zh.program.Entity.WechatUser;
 import com.zh.program.Service.WechatUserService;
 import lombok.extern.slf4j.Slf4j;

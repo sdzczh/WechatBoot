@@ -33,5 +33,5 @@ public class Constant {
     public final static String WX_OPEN_ID = "wx7968b1618f078cc4";
 
     //微信appSecret
-    public final static String WX_APP_SECRET = "aabadad78100e362da47686b7302837e";
+    public final static String WX_APP_SECRET = "8292b0a21e4f201417706ec5ee24f832";
 }

@@ -1,4 +1,4 @@
-package com.zh.program.Entity;
+package com.zh.program.Dto;
 
 import lombok.Data;
 
