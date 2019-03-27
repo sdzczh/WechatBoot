@@ -2,11 +2,13 @@ package com.zh.program.Controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.zh.program.Common.Constant;
 import com.zh.program.Common.RedisKey;
 import com.zh.program.Common.exception.WeixinException;
 import com.zh.program.Common.utils.RedisUtil;
 import com.zh.program.Common.utils.SignatureUtils;
 import com.zh.program.Common.utils.StrUtils;
+import com.zh.program.Entity.Message;
 import com.zh.program.Entity.Sysparams;
 import com.zh.program.Service.BrowseRecordService;
 import com.zh.program.Service.MessageService;
@@ -31,6 +33,8 @@ public class WebController {
     private String PREFIX = "/web/";
     @Autowired
     private SysparamsService sysparamsService;
+    @Autowired
+    private MessageService messageService;
     @Resource
     private RedisTemplate<String, String> redis;
 
@@ -48,17 +52,23 @@ public class WebController {
         if(sysparams == null){
             return WeixinException.ERROR_SERVER_URL;
         }
+        Message message = messageService.selectById(id);
+        Map<String, Object> map = new HashMap<>();
+        map.put("title", message.getTitle());
+        map.put("desc", message.getDesc());
         String sys_url = sysparams.getKeyValue();
         StringBuffer referUrl = new StringBuffer();
         referUrl.append(sys_url).append("/index/").append(id).append("/").append(openid);
-        String result =  "{'ret':'" + referUrl.toString() + "'}";
+        map.put("link", referUrl.toString());
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(map));
+        String result =  "{'ret':'" + jsonObject.toJSONString() + "'}";
         result = callback + "("+result+")";
         return result;
     }
 
     @ResponseBody
     @GetMapping("getSign")
-    public String getSign(String callback){
+    public String getSign(Integer id, String myOpenid, String code, String openid, String callback){
 
         //1、获取AccessToken
         String accessToken = RedisUtil.searchString(redis, RedisKey.SYSTEM_ACCESS_TOKEN);
@@ -76,7 +86,8 @@ public class WebController {
         log.info("accessToken:"+accessToken+"\njsapi_ticket:"+jsapi_ticket+"\n时间戳："+timestamp+"\n随机字符串："+noncestr);
 
         //4、获取url
-        String url="http://tlhe.cn/index2.html";
+        String url = sysparamsService.getSysparams(RedisKey.SYSTEM_REFER_URL).getKeyValue();
+        url = url + "?code=" + code + "&state=id%3D" + id + "%26openid%3D" + openid;
 
         //5、将参数排序并拼接字符串
         String str = "jsapi_ticket="+jsapi_ticket+"&noncestr="+noncestr+"&timestamp="+timestamp+"&url="+url;
@@ -84,12 +95,23 @@ public class WebController {
         //6、将字符串进行sha1加密
         String signature = SHA1.encode(str);
         log.info("参数："+str+"\n签名："+signature);
+
+        Sysparams sysparams = sysparamsService.getSysparams(RedisKey.SYSTEM_URL);
+        if(sysparams == null){
+            return WeixinException.ERROR_SERVER_URL;
+        }
         Map<String, Object> map = new HashMap<>();
+        Message message = messageService.selectById(id);
+        String sys_url = sysparams.getKeyValue();
+        map.put("title", message.getTitle());
+        map.put("desc", message.getDesc());
+        map.put("link", sys_url + "/index/" + id + "/" + myOpenid);
         map.put("noncestr", noncestr);
         map.put("signature", signature);
         map.put("timestamp", timestamp);
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(map));
         String result =  "{'ret':'" + jsonObject.toJSONString() + "'}";
+        log.info(result);
         result = callback + "("+result+")";
         return result;
     }

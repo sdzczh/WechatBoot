@@ -33,6 +33,10 @@ public class Message implements Serializable {
      */
     private String title;
     /**
+     * 描述
+     */
+    private String desc;
+    /**
      * 富文本信息
      */
     private String info;

@@ -29,8 +29,36 @@
                 signature: signature,// 必填，签名
                 jsApiList: ['updateAppMessageShareData','updateTimelineShareData'] // 必填，需要使用的JS接口列表
             });
+            wx.ready(function () {
+                wx.onMenuShareTimeline({
+                    title: "我们的班级我们的团，快来为班级荣誉而战！", // 分享标题
+                    desc: "哥们儿，咱多久没一起喝酒吃饭了，多久没促膝长谈了，Hey兄弟们！咱该聚聚了！",
+                    link: location.href, // 分享链接
+                    imgUrl: "https://tup.iheima.com/sport.png", // 分享图标
+                    success: function () {
+                         alert("成功");
+                    },
+                    cancel: function () {
+                         alert("失败")
+                    }
+                });
+                wx.onMenuShareAppMessage({
+                    title: "我们的班级我们的团，快来为班级荣誉而战！", // 分享标题
+                    desc: "哥们儿，咱多久没一起喝酒吃饭了，多久没促膝长谈了，Hey兄弟们！咱该聚聚了！",
+                    link: location.href, // 分享链接
+                    imgUrl: "https://tup.iheima.com/sport.png", // 分享图标
+                    success: function () {
+
+                         alert("成功");
+                    },
+                    cancel: function () {
+                         alert("失败")
+                    }
+                });
+            });
         }
     });
+
 
 </script>
 </html>
