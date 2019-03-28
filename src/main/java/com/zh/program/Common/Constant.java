@@ -23,8 +23,11 @@ public class Constant {
     // 用户同意授权,获取code
     public final static String WX_OAUTH_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
 
-    // 用户同意授权,回调url
+    // 用户同意授权,回调url 分享内容
     public final static String WX_REDIRECT_URL = "http://tlhe.cn/web.html";
+
+    //用户同意授权,回调url 查询个人分享信息
+    public final static String WX_REDIRECT_URL_QUERY_INFO = "http://tlhe.cn/query.html";
 
     // 拉去用户信息url
     public final static String WX_SNSAPI_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
@@ -34,4 +37,9 @@ public class Constant {
 
     //微信appSecret
     public final static String WX_APP_SECRET = "8292b0a21e4f201417706ec5ee24f832";
+
+    //分享任务未完成
+    public final static Integer ORDER_NOT_COMPLETE = 0;
+    //分享任务已完成
+    public final static Integer ORDER_COMPLETE = 1;
 }

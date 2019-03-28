@@ -21,5 +21,6 @@ public class BrowseRecord implements Serializable {
     private String user_open_id;//用户open_id
     private String invite_open_id;//邀请人open_id
     private Integer number; // 点击数量
+    private Integer state; // 订单状态 0未完成 1已完成
     private String createTime;
 }

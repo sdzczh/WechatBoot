@@ -45,6 +45,7 @@ public class WechatWechatUserServiceImpl implements WechatUserService {
             browseRecord.setMsg_id(id);
             browseRecord.setUser_open_id(wechatUser.getOpenId());
             browseRecord.setInvite_open_id(openid);
+            browseRecord.setState(Constant.ORDER_NOT_COMPLETE);
             browseRecordDao.save(browseRecord);
             browseRecord.setNumber(0);
         }

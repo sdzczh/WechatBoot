@@ -5,11 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.zh.program.Common.Constant;
 import com.zh.program.Common.RedisKey;
 import com.zh.program.Common.exception.WeixinException;
+import com.zh.program.Common.utils.CommonMethod;
 import com.zh.program.Common.utils.RedisUtil;
 import com.zh.program.Common.utils.SignatureUtils;
 import com.zh.program.Common.utils.StrUtils;
+import com.zh.program.Dto.ReferInfo;
 import com.zh.program.Entity.Message;
 import com.zh.program.Entity.Sysparams;
+import com.zh.program.Entity.WechatUser;
 import com.zh.program.Service.BrowseRecordService;
 import com.zh.program.Service.MessageService;
 import com.zh.program.Service.SysparamsService;
@@ -19,10 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.weixin4j.model.user.User;
 import org.weixin4j.util.SHA1;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,34 +40,53 @@ public class WebController {
     private SysparamsService sysparamsService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private WechatUserService wechatUserService;
+    @Autowired
+    private BrowseRecordService browseRecordService;
     @Resource
     private RedisTemplate<String, String> redis;
 
     /**
-     * 获取邀请地址
-     * @param id 广告id
-     * @param openid 用户id
-     * @param callback
+     * 查询邀请相关信息 重定向
+     * @return
+     */
+    @GetMapping("/queryReferInfoUrl")
+    public String getReferUrl(){
+        String requestUrl = Constant.WX_OAUTH_URL
+                .replace("APPID", Constant.WX_OPEN_ID)
+                .replace("REDIRECT_URI",
+                        CommonMethod.urlEncodeUTF8(Constant.WX_REDIRECT_URL_QUERY_INFO))
+                .replace("SCOPE", Constant.SNSAPI_USERINFO).replace("STATE","");
+        return "redirect:" + requestUrl;
+    }
+    /**
+     * 查询邀请相关信息
      * @return
      */
     @ResponseBody
-    @GetMapping("/getReferUrl")
-    public String getReferUrl(Integer id, String openid, String callback){
-        Sysparams sysparams = sysparamsService.getSysparams(RedisKey.SYSTEM_URL);
-        if(sysparams == null){
-            return WeixinException.ERROR_SERVER_URL;
+    @GetMapping("/getReferInfo")
+    public String getReferInfo(String code, String callback){
+        String result;
+        WechatUser wechatUser = wechatUserService.getUser(code);
+        if(wechatUser == null){
+            result =  "{'ret':''}";
+            log.info(result);
+            return callback + "("+result+")";
         }
-        Message message = messageService.selectById(id);
-        Map<String, Object> map = new HashMap<>();
-        map.put("title", message.getTitle());
-        map.put("desc", message.getDesc());
-        String sys_url = sysparams.getKeyValue();
-        StringBuffer referUrl = new StringBuffer();
-        referUrl.append(sys_url).append("/index/").append(id).append("/").append(openid);
-        map.put("link", referUrl.toString());
-        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(map));
-        String result =  "{'ret':'" + jsonObject.toJSONString() + "'}";
-        result = callback + "("+result+")";
+        String openid = wechatUser.getOpenId();
+        log.info("openid：" + openid);
+        List<ReferInfo> referInfos = browseRecordService.queryReferInfo(openid);
+        if(referInfos == null || referInfos.size() == 0) {
+            result =  "{'ret':''}";
+            log.info(result);
+            result = callback + "("+result+")";
+        }else{
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(referInfos));
+            result =  "{'ret':'" + jsonObject.toJSONString() + "'}";
+            log.info(result);
+            result = callback + "("+result+")";
+        }
         return result;
     }
 

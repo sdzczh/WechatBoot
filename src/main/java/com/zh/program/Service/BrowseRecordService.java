@@ -1,9 +1,12 @@
 package com.zh.program.Service;
 
+import com.zh.program.Dto.ReferInfo;
 import com.zh.program.Entity.BrowseRecord;
 import com.zh.program.Entity.Message;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Map;
 
 public interface BrowseRecordService {
     /**
@@ -15,5 +18,10 @@ public interface BrowseRecordService {
      */
     BrowseRecord queryOne(Integer msgId, String referOpenId, String openId);
 
-    void check(Message message, HttpSession session, String openid);
+    /**
+     * 获取个人分享状态信息
+     * @param openid
+     * @return
+     */
+    List<ReferInfo> queryReferInfo(String openid);
 }
