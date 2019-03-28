@@ -21,3 +21,8 @@ spring:
       charset: UTF-8
       enabled: true
       force: true
+  resources:
+    static-locations: classpath:/
+  mvc:
+    view:
+      suffix: .html

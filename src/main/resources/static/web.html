@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>11111</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .r{position:fixed; bottom:0;}
+    </style>
+    <link type="text/css" rel="stylesheet"  href="../../../static/css/style.css"/>
+    <link type="text/css" rel="stylesheet" href="../../../static/css/button.css"/>
+    <link type="text/css" rel="stylesheet" href="../../../static/css/layui.css"/>
+</head>
+<body style="text-align: center">
+<div id="notetext">
+    <div th:utext ="${item.info}">未知错误</div>
+</div>
+<!--<div>
+    <div class="r" style="margin:0 auto;width: 100%">
+        <a href="javascript:" class="button button-3d button-caution" style="width: 100%" onclick="getReferUrl()">点击复制分享链接</a>
+    </div>
+</div>-->
+</body>
+<script type="text/javascript">
+    var obj = document.getElementById("notetext");
+    obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
+</script>
+<script src="static/js/jquery.min.js" type="text/javascript" ></script>
+<script src="static/js/wx.js" type="text/javascript" ></script>
+<script src="static/js/getRequestParameters.js" type="text/javascript" ></script>
+<script src="static/js/layer.js" type="text/javascript" ></script>
+<script>
+    $(function(){
+        //封装获取参数的方法
+        var request =
+            {
+                QueryString : function(val)
+                {
+                    var uri = window.location.search;
+                    var re = new RegExp("" +val+ "=([^&?]*)", "ig");
+                    return ((uri.match(re))?(uri.match(re)[0].substr(val.length+1)):null);
+                }
+            };
+        var code = request.QueryString("code");
+        var id = GetUrlParam("id");
+        var openid = GetUrlParam("openid");
+        var url = "http://tlhe.cn/saveUser";
+        $.ajax(url, {
+            type:"GET",
+            dataType: 'jsonp',
+            data:{
+                'code': code,
+                'openid' : openid,
+                id : id
+            },
+            jsonp:"callback",
+            crossDomain: true,
+            success: function(data) {
+                var myOpenid = data.ret;
+                $.ajax("http://tlhe.cn/web/getSign", {
+                    data:{
+                        id : id, 'myOpenid' : myOpenid, 'code' : code, 'openid' : openid
+                    },
+                    type:"GET",
+                    dataType: 'jsonp',
+                    jsonp:"callback",
+                    crossDomain: true,
+                    success: function(data) {
+                        var ret = JSON.parse(data.ret);
+                        var timestamp = ret.timestamp;
+                        var nonceStr = ret.noncestr;
+                        var signature = ret.signature;
+                        var title = ret.title;
+                        var desc = ret.desc;
+                        var link = ret.link;
+                        console.info(ret)
+                        wx.config({
+                            debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                            appId: 'wx7968b1618f078cc4', // 必填，公众号的唯一标识
+                            timestamp: timestamp, // 必填，生成签名的时间戳
+                            nonceStr: nonceStr, // 必填，生成签名的随机串
+                            signature: signature,// 必填，签名
+                            jsApiList: ['updateAppMessageShareData','updateTimelineShareData','onMenuShareTimeline','onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
+                        });
+                        wx.ready(function () {
+                            wx.onMenuShareTimeline({
+                                title: title, // 分享标题
+                                desc: desc,
+                                link: link, // 分享链接
+                                imgUrl: "https://tup.iheima.com/sport.png", // 分享图标
+                                success: function () {
+                                    alert("分享到朋友圈成功");
+                                },
+                                cancel: function () {
+                                    alert("失败")
+                                }
+                            });
+                            wx.onMenuShareAppMessage({
+                                title: title, // 分享标题
+                                desc: desc,
+                                link: link, // 分享链接
+                                imgUrl: "https://tup.iheima.com/sport.png", // 分享图标
+                                success: function () {
+                                    alert("分享给朋友成功");
+                                },
+                                cancel: function () {
+                                    alert("失败")
+                                }
+                            });
+                            wx.updateAppMessageShareData({
+                                title: title, // 分享标题
+                                desc: desc, // 分享描述
+                                link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                                imgUrl: 'https://tup.iheima.com/sport.png', // 分享图标
+                                success: function () {
+                                   alert("自定义“分享给朋友”及“分享到QQ”按钮的分享内容成功")
+                                }
+                            })
+                            wx.updateTimelineShareData({
+                                title: title, // 分享标题
+                                link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                                imgUrl: 'https://tup.iheima.com/sport.png', // 分享图标
+                                success: function () {
+                                    alert("自定义“分享到朋友圈”及“分享到QQ空间”成功")
+                                }
+                            })
+                        });
+                    }
+                });
+            }
+        });
+        $.ajax("http://tlhe.cn/getData", {
+            data:{
+                id : id, 'openid' : openid
+            },
+            type:"GET",
+            dataType: 'jsonp',
+            jsonp:"callback",
+            crossDomain: true,
+            success: function(data) {
+                var html = $("#notetext").html(data.ret.data).text();
+                $("#notetext").html(html);
+                document.title = data.ret.title;
+            }
+        });
+
+    });
+    function getReferUrl() {
+        var id = GetUrlParam("id");
+        var openid = $("#user_open_id").val();
+        $.ajax("http://tlhe.cn/web/getReferUrl", {
+            data:{
+                id : id, 'openid' : openid
+            },
+            type:"GET",
+            dataType: 'jsonp',
+            jsonp:"callback",
+            crossDomain: true,
+            success: function(data) {
+                var ret = JSON.parse(data.ret);
+                layer.alert(ret.link);
+            }
+        });
+    }
+</script>
+
+</html>
