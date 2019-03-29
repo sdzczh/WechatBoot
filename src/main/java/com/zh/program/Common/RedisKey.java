@@ -7,4 +7,6 @@ public class RedisKey {
     public static final String SYSTEM_ACCESS_TOKEN = "system_access_token";
     //分享路径
     public static final String SYSTEM_REFER_URL = "refer_url";
+    //分享信息页面
+    public static final String SYSTEM_REFER_INFO_URL = "refer_info_url";
 }

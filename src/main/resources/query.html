@@ -70,7 +70,8 @@
 
                 });
                 var openid = data.openid;
-                getWxConfig(code, openid)
+                var storage=window.localStorage;
+                storage.setItem("openid", openid);
             }
         });
 

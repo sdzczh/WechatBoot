@@ -169,11 +169,13 @@ public class WebController {
 
         log.info("accessToken:"+accessToken+"\njsapi_ticket:"+jsapi_ticket+"\n时间戳："+timestamp+"\n随机字符串："+noncestr);
 
+        String url = "";
         //4、获取url
-        String url = sysparamsService.getSysparams(RedisKey.SYSTEM_REFER_URL).getKeyValue();
         if(Constant.WEB_PAGE.equals(scenePage)) {
+            url = sysparamsService.getSysparams(RedisKey.SYSTEM_REFER_URL).getKeyValue();
             url = url + "?code=" + code + "&state=id%3D" + id + "%26openid%3D" + openid;
         }else if(Constant.QUERY_PAGE.equals(scenePage)){
+            url = sysparamsService.getSysparams(RedisKey.SYSTEM_REFER_INFO_URL).getKeyValue();
             url = url + "?code=" + code + "&state=";
         }
 
