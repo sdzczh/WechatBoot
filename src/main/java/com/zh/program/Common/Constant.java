@@ -42,4 +42,14 @@ public class Constant {
     public final static Integer ORDER_NOT_COMPLETE = 0;
     //分享任务已完成
     public final static Integer ORDER_COMPLETE = 1;
+
+    //广告页
+    public final static Integer WEB_PAGE = 0;
+    //我的信息页
+    public final static Integer QUERY_PAGE = 1;
+
+    //微信
+    public final static Integer WECHATPAY = 0;
+    //支付宝
+    public final static Integer ALIPAY = 0;
 }

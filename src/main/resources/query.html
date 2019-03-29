@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>22222</title>
@@ -7,21 +7,35 @@
     <link type="text/css" rel="stylesheet" href="../../../static/css/layui.css"/>
 </head>
 <body style="text-align: center">
-    <div id="notetext">
-        <div th:utext ="${item.info}">未知错误</div>
-    </div>
+    <table class="layui-table">
+         <thead>
+            <tr>
+                <th>ID</th>
+                <th>广告标题</th>
+                <th>单价</th>
+                <th>酬金总额</th>
+                <th>提现状态</th>
+                <th>操作</th>
+            </tr>
+         </thead>
+
+        <tbody class="table_node">
+             <tr class="tr_node" >
+               <!--动态载入数据-->
+             </tr>
+               <!-- more data -->
+        </tbody>
+     </table>
+<span>
+    <a class="layui-btn layui-btn-radius layui-btn-normal" href="javascript:" onclick="chooseImage()">上传收款二维码</a>
+</span>
 </body>
-<script type="text/javascript">
-    var obj = document.getElementById("notetext");
-    obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
-</script>
 <script src="static/js/jquery.min.js" type="text/javascript" ></script>
 <script src="static/js/wx.js" type="text/javascript" ></script>
 <script src="static/js/getRequestParameters.js" type="text/javascript" ></script>
 <script src="static/js/layer.js" type="text/javascript" ></script>
 <script>
     $(function(){
-        //封装获取参数的方法
         var request =
             {
                 QueryString : function(val)
@@ -41,8 +55,22 @@
             jsonp:"callback",
             crossDomain: true,
             success: function(data) {
-                var html = $("#notetext").html(data.ret.data).text();
-                $("#notetext").html(html);
+                var html = JSON.parse(data.ret);
+                $.each(html, function (index, n) {
+                    var rowTr = document.createElement('tr');
+                    rowTr.className = "tr_node";
+                    var child = "<td>" + html[index].id +  "</td>"
+                        + "<td>" + html[index].title + "</td>"
+                        + "<td>" + html[index].price + "元/次</td>"
+                        + "<td>" + html[index].total + "元</td>"
+                        + "<td>" + html[index].stateStr + "</td>"
+                        +"<td><a class='layui-btn' href='javascript:' onclick='withdrawal(" + html[index].id + "," + html[index].state + ")'>提现</a></td>"
+                    rowTr.innerHTML = child;
+                    $(".table_node").append(rowTr)
+
+                });
+                var openid = data.openid;
+                getWxConfig(code, openid)
             }
         });
 

@@ -41,7 +41,7 @@ public class BrowseRecordServiceImpl implements BrowseRecordService {
     @Override
     public List<ReferInfo> queryReferInfo(String openid) {
         List<Object> list = referInfoDao.queryReferInfo(openid);
-        log.info(JSONObject.toJSONString(list));
+        String stateStr;
         if(list.size() > 0) {
             List<ReferInfo> referInfos = new LinkedList<>();
             for(Object object : list) {
@@ -52,7 +52,16 @@ public class BrowseRecordServiceImpl implements BrowseRecordService {
                 referInfo.setTitle(jsonArray.getString(1));
                 referInfo.setPrice(new BigDecimal(jsonArray.getString(2)));
                 referInfo.setTotal(new BigDecimal(jsonArray.getString(3)));
-                referInfo.setState(jsonArray.getInteger(4));
+                Integer state = jsonArray.getInteger(4);
+                if(state == 0) {
+                    stateStr = "未提现";
+                }else if(state == 1) {
+                        stateStr = "审核中";
+                }else {
+                    stateStr = "已提现";
+                }
+                referInfo.setState(state);
+                referInfo.setStateStr(stateStr);
                 referInfos.add(referInfo);
             }
             return referInfos;

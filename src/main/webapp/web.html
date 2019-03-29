@@ -57,9 +57,9 @@
             crossDomain: true,
             success: function(data) {
                 var myOpenid = data.ret;
-                $.ajax("http://tlhe.cn/web/getSign", {
+                $.ajax("http://tlhe.cn/web/getMesInfo", {
                     data:{
-                        id : id, 'myOpenid' : myOpenid, 'code' : code, 'openid' : openid
+                        id : id, 'myOpenid' : myOpenid, 'code' : code, 'openid' : openid, scenePage : 0
                     },
                     type:"GET",
                     dataType: 'jsonp',

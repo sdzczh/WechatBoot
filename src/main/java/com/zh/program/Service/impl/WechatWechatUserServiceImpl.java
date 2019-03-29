@@ -46,8 +46,8 @@ public class WechatWechatUserServiceImpl implements WechatUserService {
             browseRecord.setUser_open_id(wechatUser.getOpenId());
             browseRecord.setInvite_open_id(openid);
             browseRecord.setState(Constant.ORDER_NOT_COMPLETE);
-            browseRecordDao.save(browseRecord);
             browseRecord.setNumber(0);
+            browseRecordDao.save(browseRecord);
         }
         Message message = messageDao.getOne(id);
         //当前已浏览次数

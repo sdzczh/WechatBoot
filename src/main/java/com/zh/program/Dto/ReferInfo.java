@@ -15,5 +15,5 @@ public class ReferInfo {
     private BigDecimal price;
     private BigDecimal total;
     private Integer state;
-
+    private String stateStr;
 }
